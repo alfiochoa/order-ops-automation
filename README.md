@@ -55,6 +55,29 @@ curl -XPOST localhost:8000/webhook/order -H 'Idempotency-Key: demo-1' -d '{"orde
 # -> {"status":"done","risk":100,"flags":["HIGH_VALUE","COD","ADDR_MISMATCH","REVIEW"],"notified":true,...}
 ```
 
+## Demo (`./demo.sh`, ~45 s)
+Starts a 70%-flaky mock webhook, sends traffic, shows the dead-letter queue, "recovers" the webhook and replays
+(`SHOT=docs/dashboard.png ./demo.sh` also re-takes the screenshot; needs `pip install playwright && playwright install chromium`). Real output:
+```
+== 1. traffic while the webhook is 70% flaky
+{"ok": 127, "duplicate": 16, "rejected": 7, "failed": 0}
+== 2. health
+{"status":"ok","dlq_open":23,"uptime_s":37}
+== 3. dead-letter queue
+#1 notify   sim-order-4 attempts=4 err=HTTP 503
+#2 notify   sim-order-23 attempts=4 err=HTTP 503
+#3 notify   sim-order-25 attempts=4 err=HTTP 503
+#4 notify   sim-order-26 attempts=4 err=HTTP 503
+#5 notify   sim-order-29 attempts=4 err=HTTP 503
+open dead letters: 23
+== 4. replay
+{"resolved": 23, "failed": 0}
+== 5. dlq after replay
+open dead letters: 0
+```
+
+![dashboard](docs/dashboard.png)
+
 ## Results
 `python -m tools.simulate --inprocess -n 300 --seed 7` (webhook failing 60% of calls, 4 attempts each; also run in CI):
 ```

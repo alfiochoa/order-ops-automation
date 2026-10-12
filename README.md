@@ -2,6 +2,18 @@
 
 ![ci](https://github.com/alfiochoa/order-ops-automation/actions/workflows/ci.yml/badge.svg)
 
+> **Idempotent, retrying, replayable webhook automation for a small online store: orders, leads and support tickets in, flagged and audited, Slack/Discord alerts out.**
+
+![dashboard](docs/dashboard.png)
+
+Real `./demo.sh` excerpt (webhook 70% flaky, then recovered): 23 notifications dead-lettered, none lost:
+```
+open dead letters: 23
+$ python -m opsauto.cli replay
+{"resolved": 23, "failed": 0}
+open dead letters: 0
+```
+
 Webhook-driven back-office automation for a small online store: orders, leads and support tickets come in,
 get **validated → enriched → run through YAML business rules → stored in SQLite + exported to CSV/XLSX → announced
 to Slack/Discord**, with every step audited. Built to show *reliability* patterns, not just happy-path glue.
@@ -75,8 +87,6 @@ open dead letters: 23
 == 5. dlq after replay
 open dead letters: 0
 ```
-
-![dashboard](docs/dashboard.png)
 
 ## Results
 `python -m tools.simulate --inprocess -n 300 --seed 7` (webhook failing 60% of calls, 4 attempts each; also run in CI):

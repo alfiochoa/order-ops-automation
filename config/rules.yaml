@@ -1,0 +1,40 @@
+# Business rules are data, not code. Edit and restart; no deploy of Python needed.
+# Fields available to rules: kind, email, free_email, text (lead/support) and for orders:
+# total, payment_method, cod, country_mismatch, high_value, new_customer, high_risk_country,
+# prior_flagged, vip, customer_orders, risk_score.
+retry:
+  max_attempts: 4
+  base_delay: 0.5     # seconds; delay = base * factor^n (+ jitter), capped
+  factor: 2.0
+  max_delay: 8.0
+vip:
+  min_orders: 3
+  min_spent: 1000
+risk:
+  high_value_threshold: 500
+  review_threshold: 70
+  high_risk_countries: [NG, RU, ZZ]   # synthetic list for the demo, not real fraud guidance
+  weights:                            # added to the score when the ctx boolean is true
+    cod: 25
+    country_mismatch: 25
+    high_value: 20
+    new_customer: 10
+    free_email: 5
+    high_risk_country: 20
+    prior_flagged: 30
+    vip: -20
+rules:
+  - {name: high_value, kinds: [order], flag: HIGH_VALUE, notify: true,
+     all: [{field: total, op: gte, value: 500}]}
+  - {name: cod_large, kinds: [order], flag: COD, notify: true,
+     all: [{field: payment_method, op: eq, value: cod}, {field: total, op: gte, value: 150}]}
+  - {name: address_mismatch, kinds: [order], flag: ADDR_MISMATCH, notify: false,
+     all: [{field: country_mismatch, op: eq, value: true}]}
+  - {name: vip_customer, kinds: [order], flag: VIP, notify: true,
+     all: [{field: vip, op: eq, value: true}]}
+  - {name: manual_review, kinds: [order], flag: REVIEW, notify: true,
+     all: [{field: risk_score, op: gte, value: 70}]}
+  - {name: business_lead, kinds: [lead], flag: B2B_LEAD, notify: true,
+     all: [{field: free_email, op: eq, value: false}]}
+  - {name: urgent_ticket, kinds: [support], flag: URGENT, notify: true,
+     all: [{field: text, op: contains, value: [refund, chargeback, urgent, lawyer, broken]}]}

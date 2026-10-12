@@ -13,6 +13,6 @@ def test_demo_seed_then_replay_leaves_no_dead_letters():
 
 
 def test_streamlit_app_renders_without_exceptions():
-    at = AppTest.from_file("streamlit_app.py", default_timeout=60).run()
+    at = AppTest.from_file("../streamlit_app.py", default_timeout=60).run()
     assert not at.exception
     assert [m.label for m in at.metric][:2] == ["Events", "Notified"]

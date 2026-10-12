@@ -36,6 +36,12 @@ flowchart LR
   RP --> N
 ```
 
+## Live demo (Streamlit Community Cloud)
+`streamlit_app.py` at the repo root is a self-seeding demo: on first run it pushes ~200 synthetic webhooks through the real pipeline
+(in-process, mocked 60%-flaky notification webhook), then lets you replay the dead-letter queue and test idempotency from the UI.
+No network, no secrets. Run locally: `pip install -r requirements.txt && streamlit run streamlit_app.py`.
+Cloud settings: repo `alfiochoa/order-ops-automation`, branch `main`, main file `streamlit_app.py`.
+
 ## Reliability features
 | Concern | Implementation |
 |---|---|
@@ -48,7 +54,7 @@ flowchart LR
 
 ## Run it
 ```bash
-pip install -r requirements.txt
+pip install -r requirements-dev.txt
 python -m tools.mock_webhook &                                   # fake Slack/Discord on :9000
 uvicorn opsauto.app:app_factory --factory --port 8000 &          # API + dashboard
 python -m tools.simulate -n 200                                  # synthetic traffic

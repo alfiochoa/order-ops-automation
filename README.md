@@ -1,6 +1,6 @@
 # Order Ops Automation
 
-![ci](https://github.com/alfiochoa/order-ops-automation/actions/workflows/ci.yml/badge.svg)
+![ci](https://github.com/alfiochoa/order-ops-automation/actions/workflows/ci.yml/badge.svg) [![Live demo](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://alfredo-ops-automation.streamlit.app/)
 
 > **Idempotent, retrying, replayable webhook automation for a small online store: orders, leads and support tickets in, flagged and audited, Slack/Discord alerts out.**
 
@@ -37,6 +37,10 @@ flowchart LR
 ```
 
 ## Live demo (Streamlit Community Cloud)
+**Live demo: https://alfredo-ops-automation.streamlit.app/** (synthetic data, self-seeding; first load after idle may take a few seconds to wake)
+
+![live demo](docs/live-demo.png)
+
 `streamlit_app.py` at the repo root is a self-seeding demo: on first run it pushes ~200 synthetic webhooks through the real pipeline
 (in-process, mocked 60%-flaky notification webhook), then lets you replay the dead-letter queue and test idempotency from the UI.
 No network, no secrets. Run locally: `pip install -r requirements.txt && streamlit run streamlit_app.py`.

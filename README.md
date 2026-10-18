@@ -37,7 +37,7 @@ flowchart LR
 ```
 
 ## Live demo (Streamlit Community Cloud)
-**Live demo: https://alfredo-ops-automation.streamlit.app/** (synthetic data, self-seeding; first load after idle may take a few seconds to wake)
+**Live demo: https://alfredo-ops-automation.streamlit.app/** (synthetic data, self-seeding; first load after idle can take about 30 s to wake)
 
 ![live demo](docs/live-demo.png)
 
@@ -107,7 +107,7 @@ notified  147 | dead-lettered: 28
 replay    {"resolved": 28, "failed": 0} | dlq_open now: 0
 ```
 All 33 client retries were de-duplicated, 11 malformed payloads rejected, and every dead-lettered notification was
-delivered after replay. 10 pytest tests cover rules, normalisation, idempotency, retry, DLQ/replay, HMAC, health.
+delivered after replay. 12 pytest tests cover rules, normalisation, idempotency, retry, DLQ/replay, HMAC, health, plus 2 Streamlit app smoke tests.
 
 ## Limitations
 - Synthetic data and a toy risk model (weights/country list are demo values, not fraud advice). VIP counts are high because the simulator reuses few customers.
